@@ -1,0 +1,5 @@
+1. Usually i would start with the db
+2. Seems good here also to do that
+3. Maybe get the ui and auth rolling
+4. Check how to hash password
+5. Use material UI
