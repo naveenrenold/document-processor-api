@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitReminder", "GitReminder.csproj", "{12C6513B-57A7-411D-9D68-30D7396D871E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentProcessor", "DocumentProcessor.csproj", "{12C6513B-57A7-411D-9D68-30D7396D871E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

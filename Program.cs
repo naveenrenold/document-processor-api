@@ -1,5 +1,5 @@
-using GitReminder.Endpoints;
-using GitReminder.Startup;
+using DocumentProcessor.Endpoints;
+using DocumentProcessor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddDependencies();

@@ -1,6 +1,6 @@
 ﻿
 
-namespace GitReminder.Endpoints
+namespace DocumentProcessor.Endpoints
 {
     public static class PullRequestEndpoints
     {

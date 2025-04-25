@@ -1,6 +1,6 @@
 ﻿
 
-namespace GitReminder.Startup
+namespace DocumentProcessor.Startup
 {
     public static class DependencyInjectionConfig
     {
