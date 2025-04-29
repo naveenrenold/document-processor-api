@@ -3,3 +3,33 @@
 3. Maybe get the ui and auth rolling
 4. Check how to hash password
 5. Use material UI
+
+26/4/25
+1.  Add css loader - no need since tailwind
+2. Create a app registration with only entra id and access to graph api - done
+3. Create three api roles in it -not possible
+6. Need to find other ways to figure out admin /employee - future
+8. Create others as guest and only ogalvi as member, then they cant do anything - ok
+9. MFA should be fine and entra id seems to work -ok
+10. Do i need to create admin module? ->maybe later
+
+
+7.Mean while lets start with the form module or admin module?
+obviously sign in -> form -> admin
+
+
+3. Take the app registration details and add to ui -done
+1.In UI make the header visible on all pages
+2. It should display name or sign in or sign out and date 
+logo genuine soft username logout date
+
+28/4/25
+
+1.  Tighten auth
+2. Try to make auth solid
+
+29/4/25
+1. learned context api and oauth
+2. Now make header signin and signout functions -done
+3. Next need to align the header and make it fit (1)
+4. Then need to try and fetch token for graph api and get it (2)
