@@ -3,12 +3,13 @@ using DocumentProcessor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddDependencies();
+builder.AddSqlConnection(builder.Configuration.GetConnectionString("Database") ?? "");
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
-app.AddPullRequestEndpoints();
+app.AddEndpoints();
 
 app.Run();
 

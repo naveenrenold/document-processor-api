@@ -33,3 +33,8 @@ logo genuine soft username logout date
 2. Now make header signin and signout functions -done
 3. Next need to align the header and make it fit (1)
 4. Then need to try and fetch token for graph api and get it (2)
+
+22/5/25
+1. Need to do api db connection
+2. Need to create a ssingle flow for api
+3. Create interfaces and proper folder structure

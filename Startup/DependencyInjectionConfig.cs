@@ -1,6 +1,4 @@
-﻿
-
-namespace DocumentProcessor.Startup
+﻿namespace DocumentProcessor.Startup
 {
     public static class DependencyInjectionConfig
     {
