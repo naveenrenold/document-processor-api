@@ -1,7 +1,10 @@
-﻿namespace DocumentProcessor.Model
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace DocumentProcessor.Model
 {
     public class Attachment
     {
+        [BindNever]
         public int AttachmentId { get; set; }
         public int Id { get; set; }
         public string? FileName { get; set; }

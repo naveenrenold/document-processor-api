@@ -38,3 +38,8 @@ logo genuine soft username logout date
 1. Need to do api db connection
 2. Need to create a ssingle flow for api
 3. Create interfaces and proper folder structure
+
+24/5/25
+1. Decide on form design and workflow connect form and api
+2. deploy api
+3. Make post form is working complete more ui before integrate

@@ -4,7 +4,7 @@ namespace DocumentProcessor.DataLayer.Interface
 {
     public interface IFormDL
     {
-        IEnumerable<Form> GetForm();
-        bool PostForm();
+        Task<IEnumerable<Form>> GetForm();
+        Task<int> PostForm(Form request, List<Attachment> attachments);
     }
 }

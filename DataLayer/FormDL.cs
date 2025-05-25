@@ -10,15 +10,14 @@ namespace DocumentProcessor.DataLayer
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public IEnumerable<Form> GetForm()
+        public async Task<IEnumerable<Form>> GetForm()
         {
-            var response = conn.Query<Form>(Query.Form.getForm);
-            return response;
+            return await conn.QueryAsync<Form>(Query.Form.getForm);            
         }
-        public bool PostForm()
+        public async Task<int> PostForm(Form request, List<Attachment> attachments)
         {
-            var response = conn.Execute(Query.Form.postForm) > 0;
-            return response;
+            request.StatusId = 2;
+            return await conn.ExecuteScalarAsync<int>(Query.Form.postForm, request);                           
         }
     }
 }
