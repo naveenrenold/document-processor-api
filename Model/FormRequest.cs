@@ -2,7 +2,7 @@
 {
     public class FormRequest 
     {
-        public Form Form { get; set; }
-        public List<Attachment> Attachments { get; set; }
+        public required Form Form { get; set; }
+        public List<Attachment>? Attachments { get; set; }
     }
 }

@@ -1,9 +1,11 @@
-﻿namespace DocumentProcessor.Startup
+﻿using Microsoft.Extensions.Options;
+
+namespace DocumentProcessor.Startup
 {
     public static class CorsConfig
     {
         public static void AddCors(this WebApplicationBuilder builder, string[] allowedUrls)
-        {
+        {            
             builder.Services.AddCors(
                 options =>
                 {

@@ -40,6 +40,6 @@ logo genuine soft username logout date
 3. Create interfaces and proper folder structure
 
 24/5/25
-1. Decide on form design and workflow connect form and api
-2. deploy api
-3. Make post form is working complete more ui before integrate
+1. Decide on form design and workflow connect form and api - done
+2. deploy api -done
+3. Make post form is working complete more ui before integrate -done
