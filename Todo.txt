@@ -43,3 +43,8 @@ logo genuine soft username logout date
 1. Decide on form design and workflow connect form and api - done
 2. deploy api -done
 3. Make post form is working complete more ui before integrate -done
+
+29/5/25
+1. Made api. gj
+2. Now need to improve query to call all
+3. need to discuss three

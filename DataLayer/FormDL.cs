@@ -10,13 +10,16 @@ using Query = DocumentProcessor.Constants.Query;
 
 namespace DocumentProcessor.DataLayer
 {
-    public class FormDL(IDbConnection dbconnection, IFtpClient ftpClient, IOptions<AppSettings> appSettings) : IFormDL
+    public class FormDL(IDbConnection dbconnection, IFtpClient ftpClient, IOptions<AppSettings> appSettings) : BaseRepository, IFormDL
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public async Task<IEnumerable<Form>> GetForm()
+        public async Task<IEnumerable<Form>> GetForm(FormFilter filter)
         {
-            return await conn.QueryAsync<Form>(Query.Form.getForm);            
+            var query = Query.Form.getForm;
+            var form = new DynamicParameters();
+            query = BuildQuery(filter, query, ref form);
+            return await conn.QueryAsync<Form>(query, form);            
         }
         public async Task<int> PostForm(Form request, IFormFileCollection? attachments)
         {
