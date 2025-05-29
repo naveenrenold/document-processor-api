@@ -22,6 +22,13 @@ namespace DocumentProcessor.Validator.Model
             RuleFor(form => form.ProcessId)
                 .NotEmpty().WithMessage("Process is required.")
                 .GreaterThan(0).WithMessage("Process must be greater than 0.");
+            RuleFor(form => form.PhoneNumber)
+                .Matches("^(\\+91|\\+91-|0)?[789]\\d{9}$").WithMessage("Phone Number is not valid.")
+                .NotEmpty().WithMessage("Phone Number is required.")
+                .MaximumLength(15).WithMessage("Phone Number cannot exceed 15 characters.");
+            RuleFor(form => form.PhoneNumber2)
+                .Matches("^(\\+91|\\+91-|0)?[789]\\d{9}$").When(form => !string.IsNullOrEmpty(form.PhoneNumber2)).WithMessage("Phone Number is not valid.")                
+                .MaximumLength(15).When(form => !string.IsNullOrEmpty(form.PhoneNumber2)).WithMessage("Phone Number2 cannot exceed 15 characters.");
         }
     }
 }

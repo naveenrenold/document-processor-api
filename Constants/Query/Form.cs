@@ -14,6 +14,8 @@ SELECT
     P.ProcessName,
     F.[CustomerName],
     F.[CustomerAddress],
+    F.[PhoneNumber],
+    F.[PhoneNumber2],
     F.[LocationId],
     L.LocationName,
     F.[CreatedBy],
@@ -26,7 +28,7 @@ inner join FormStatus FS on F.StatusId = FS.StatusId
 inner join Process P on F.ProcessId = P.ProcessId
 inner join Location L on F.LocationId = L.LocationId )
 select count(1) OVER() AS 
-TotalRecords, Id, TypeId, TypeName, StatusId, StatusName, ProcessId, ProcessName, CustomerName, CustomerAddress, LocationId, LocationName, CreatedBy, CreatedOn, LastUpdatedBy, LastUpdatedOn
+TotalRecords, Id, TypeId, TypeName, StatusId, StatusName, ProcessId, ProcessName, CustomerName, CustomerAddress,PhoneNumber, PhoneNumber2, LocationId, LocationName, CreatedBy, CreatedOn, LastUpdatedBy, LastUpdatedOn
 from CTE {0} {1}
 OFFSET @offset ROWS 
 FETCH NEXT @limit ROWS ONLY;";
@@ -37,9 +39,9 @@ exec getLocalDate @LocalDateTime OUTPUT;
 
 Select @LocationId = LocationId from Location where LocationName = @Location;
 
-Insert into Form(TypeId, StatusId, ProcessId, CustomerName, CustomerAddress,LocationId,CreatedBy,CreatedOn, LastUpdatedBy, LastUpdatedOn)
+Insert into Form(TypeId, StatusId, ProcessId, CustomerName, CustomerAddress, PhoneNumber, PhoneNumber2,LocationId,CreatedBy,CreatedOn, LastUpdatedBy, LastUpdatedOn)
 values
-(@TypeId, @StatusId, @ProcessId, @CustomerName, @CustomerAddress, @LocationId, @LastUpdatedBy, @LocalDateTime, @LastUpdatedBy, @LocalDateTime);
+(@TypeId, @StatusId, @ProcessId, @CustomerName, @CustomerAddress,@PhoneNumber, @PhoneNumber2, @LocationId, @LastUpdatedBy, @LocalDateTime, @LastUpdatedBy, @LocalDateTime);
 Select @@Identity
 ";
     }
