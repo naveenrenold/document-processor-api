@@ -14,12 +14,12 @@ namespace DocumentProcessor.DataLayer
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public async Task<IEnumerable<Form>> GetForm(FormFilter filter)
+        public async Task<IEnumerable<FormResponse>> GetForm(FormFilter filter)
         {
             var query = Query.Form.getForm;
             var form = new DynamicParameters();
             query = BuildQuery(filter, query, ref form);
-            return await conn.QueryAsync<Form>(query, form);            
+            return await conn.QueryAsync<FormResponse>(query, form);            
         }
         public async Task<int> PostForm(Form request, IFormFileCollection? attachments)
         {
