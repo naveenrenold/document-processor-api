@@ -14,7 +14,7 @@ namespace DocumentProcessor.DataLayer
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public async Task<IEnumerable<FormResponse>> GetForm(FormFilter filter)
+        public async Task<IEnumerable<FormResponse>> GetForm(QueryFilter filter)
         {
             var query = Query.Form.getForm;
             var form = new DynamicParameters();
@@ -28,17 +28,37 @@ namespace DocumentProcessor.DataLayer
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
-                    request.StatusId = 2;
-                    var formId = await connection.ExecuteScalarAsync<int>(Query.Form.postForm, request, transaction);
+                    request.StatusId = request.StatusId == 0 ? 2 : request.StatusId;
+                    var formId = request.Id;
+                    if(formId == 0)
+                    {
+                        formId = await connection.ExecuteScalarAsync<int>(Query.Form.postForm, request, transaction);
+                    }
+                    else
+                    {
+                        var rowsAffected = await connection.ExecuteAsync(Query.Form.updateForm, request, transaction);
+                        if (rowsAffected == 0)
+                        {
+                            return 0;
+                        }
+                    }
+
+                    ftpClient.AutoConnect();
+                    var attachmentIds = attachments?.Select(a => a.FileName).ToList() ?? [];                    
+                    var deleteresult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, FileNames = attachmentIds }, transaction);
+                    var fileNames = ftpClient.GetNameListing($"{appSettings.Value.FTPDestinationPath}/{formId}").Where(a => !attachmentIds.Contains(a));                    
 
                     if (attachments == null)
                     {
+                        foreach (var fileName in fileNames)
+                        {
+                            ftpClient.DeleteFile($"{appSettings.Value.FTPDestinationPath}/{formId}/{fileName}");
+                        }
                         transaction.Commit();
                         return formId;
                     }
                     try
-                    {
-                        ftpClient.AutoConnect();
+                    {                                                
                         foreach (var attachment in attachments)
                         {
                             var fileName = $"{attachment.FileName}";
@@ -51,6 +71,7 @@ namespace DocumentProcessor.DataLayer
                                 FileType = attachment.ContentType,
                                 FilePath = destinationPath,
                                 UploadedBy = request.LastUpdatedBy,
+                                FileSize = attachment.Length.ToString(),
                             };
 
                             var result = await connection.ExecuteAsync(Query.Attachment.addAttachment, attachmentData, transaction);
@@ -62,6 +83,10 @@ namespace DocumentProcessor.DataLayer
                             {
                                 ftpClient.UploadStream(stream, destinationPath);
                             }
+                        }
+                        foreach (var fileName in fileNames)
+                        {
+                            ftpClient.DeleteFile($"{appSettings.Value.FTPDestinationPath}/{formId}/{fileName}");
                         }
                     }
                     catch (Exception ex)

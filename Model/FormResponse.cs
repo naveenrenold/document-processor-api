@@ -6,6 +6,7 @@
         public required string  TypeName { get; set; }
         public required string StatusName { get; set; }
         public required string ProcessName { get; set; }
+        public int ProcessId { get; set; }
         public string? LocationName { get; set; }
         public string? CustomerName { get; set; }
         public string? CustomerAddress { get; set; }

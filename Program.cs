@@ -15,6 +15,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.AddFormEndpoints();
 app.AddProcessEndpoints();
+app.AddAttachmentEndpoints();
 app.UseCors("CorsPolicy");
 
 app.Run();
