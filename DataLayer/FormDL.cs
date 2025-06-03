@@ -39,23 +39,25 @@ namespace DocumentProcessor.DataLayer
                         var rowsAffected = await connection.ExecuteAsync(Query.Form.updateForm, request, transaction);
                         if (rowsAffected == 0)
                         {
+                            transaction.Rollback();
                             return 0;
                         }
                     }
 
-                    ftpClient.AutoConnect();
-                    var fileNames = new List<string?> {};
+                    ftpClient.AutoConnect();                    
+                    var getAttachment = await attachmentDL.GetAttachment(new QueryFilter("AttachmentId", Field: "AttachmentId,FileName", Query: $"Id eq {formId}"), false);
+
+                    var deleteFileNames = new List<string?> { };
+                    var addFileNames = attachments?.Where(a => !getAttachment.Any(b => b.FileName == a.FileName)) ?? [];
                     if (deleteAttachments != null && deleteAttachments.Count > 0)
-                    {
-                        var deleteAttachmentString = string.Join(",", deleteAttachments);
-                        var getAttachment = await attachmentDL.GetAttachment(new QueryFilter("AttachmentId", Field: "AttachmentId", Query: $"attachmentId in {deleteAttachmentString}"), false);
-                        fileNames = getAttachment.Select(x => x.FileName).ToList();                        
-                        var deleteresult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, AttachmentId = deleteAttachments }, transaction);
+                    {                                               
+                        deleteFileNames = getAttachment.Where(a => deleteAttachments.Contains(a.AttachmentId) ).Select(x => x.FileName).ToList();                        
+                        var deleteResult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, FileNames = deleteFileNames }, transaction);
                     }
 
                     if (attachments == null)
                     {
-                        foreach (var fileName in fileNames)
+                        foreach (var fileName in deleteFileNames)
                         {
                             ftpClient.DeleteFile($"{appSettings.Value.FTPDestinationPath}/{formId}/{fileName}");
                         }
@@ -64,7 +66,7 @@ namespace DocumentProcessor.DataLayer
                     }
                     try
                     {                                                
-                        foreach (var attachment in attachments)
+                        foreach (var attachment in addFileNames)
                         {
                             var fileName = $"{attachment.FileName}";
                             var destinationPath = $"{appSettings.Value.FTPDestinationPath}/{formId}/{fileName}";
@@ -89,7 +91,7 @@ namespace DocumentProcessor.DataLayer
                                 ftpClient.UploadStream(stream, destinationPath);
                             }
                         }
-                        foreach (var fileName in fileNames)
+                        foreach (var fileName in deleteFileNames)
                         {
                             ftpClient.DeleteFile($"{appSettings.Value.FTPDestinationPath}/{formId}/{fileName}");
                         }

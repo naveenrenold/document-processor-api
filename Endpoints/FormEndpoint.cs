@@ -23,26 +23,23 @@ namespace DocumentProcessor.Endpoints
 
         public static async Task<IResult> PostForm(IFormDL formDL, [FromForm]string request, IFormFileCollection attachments)
         {
-            var form = System.Text.Json.JsonSerializer.Deserialize<Form>(request, new System.Text.Json.JsonSerializerOptions
+            var jsonSerialiserOptions = new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
-            var deleteAttachments = System.Text.Json.JsonSerializer.Deserialize<DeleteAttachmentsRequest>(request, new System.Text.Json.JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            var error = ValidatePostForm(form, attachments);
+            };
+            var formRequest = System.Text.Json.JsonSerializer.Deserialize<FormRequest>(request, jsonSerialiserOptions);            
+            var error = ValidatePostForm(formRequest?.Form, attachments);
             if (error != "")
             {
                 return Results.BadRequest(new ValidationModel(error));
             }
 
-            var response = await formDL.PostForm(form, attachments, deleteAttachments?.DeleteAttachments ?? []);
+            var response = await formDL.PostForm(formRequest?.Form, attachments, formRequest?.DeleteAttachments ?? []);
             if (response == 0)
             {
                 return Results.BadRequest("Failed to add form data");
             }            
-            return Results.Ok($"Form:{response} has been created");
+            return Results.Ok(formRequest.Form.Id == 0 ?  $"Form:{response} has been created" : $"Form:{response} has been updated");
         }
         public static string ValidatePostForm(Form? form, IFormFileCollection? attachments)
         {
