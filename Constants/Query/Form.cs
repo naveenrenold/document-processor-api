@@ -51,17 +51,17 @@ exec getLocalDate @LocalDateTime OUTPUT;
 
 Select @LocationId = LocationId from Location where LocationName = @Location;
     UPDATE Form
-    SET TypeId = IFF(@TypeId is NULL, TypeId, @TypeId),
-        StatusId = IFF(@StatusId is NULL, StatusId, @StatusId),
-        ProcessId = IFF(@ProcessId is NULL, ProcessId, @ProcessId),
-        CustomerName = IFF(@CustomerName is NULL, CustomerName, @CustomerName),
-        CustomerAddress = IFF(@CustomerAddress is NULL, CustomerAddress, @CustomerAddress),
-        LocationId = IFF(@LocationId is NULL, LocationId, @LocationId),
-        phoneNumber = IFF(@PhoneNumber is NULL, phoneNumber, @PhoneNumber),
-        phoneNumber2 = IFF(@PhoneNumber2 is NULL, phoneNumber2, @PhoneNumber2),
-        LastUpdatedBy = IFF(@UpdatedUser is NULL, LastUpdatedBy, @UpdatedUser),
-        LastUpdatedOn = IFF(@LocalDateTime is NULL, LastUpdatedOn, @LocalDateTime)
-    WHERE Id = @FormId;
+    SET TypeId = IIF(@TypeId is NULL, TypeId, @TypeId),
+        StatusId = IIF(@StatusId is NULL, StatusId, @StatusId),
+        ProcessId = IIF(@ProcessId is NULL, ProcessId, @ProcessId),
+        CustomerName = IIF(@CustomerName is NULL, CustomerName, @CustomerName),
+        CustomerAddress = IIF(@CustomerAddress is NULL, CustomerAddress, @CustomerAddress),
+        LocationId = IIF(@LocationId is NULL, LocationId, @LocationId),
+        phoneNumber = IIF(@PhoneNumber is NULL, phoneNumber, @PhoneNumber),
+        phoneNumber2 = IIF(@PhoneNumber2 is NULL, phoneNumber2, @PhoneNumber2),
+        LastUpdatedBy = IIF(@LastUpdatedBy is NULL, LastUpdatedBy, @LastUpdatedBy),
+        LastUpdatedOn =  @LocalDateTime
+    WHERE Id = @Id;
 
 ";
 

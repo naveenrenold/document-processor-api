@@ -35,7 +35,7 @@
         DECLARE @LocalDateTime DATETIME;
         exec getLocalDate @LocalDateTime OUTPUT;
         
-        Delete from Attachment where Id = @Id and AttachmentId not in @AttachmentIds
+        Delete from Attachment where Id = @Id and AttachmentId in @AttachmentIds
     ";
     }
 }

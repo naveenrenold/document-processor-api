@@ -5,6 +5,6 @@ namespace DocumentProcessor.DataLayer.Interface
     public interface IFormDL
     {
         Task<IEnumerable<FormResponse>> GetForm(QueryFilter filter);
-        Task<int> PostForm(Form request, IFormFileCollection? attachments);
+        Task<int> PostForm(Form request, IFormFileCollection? attachments, List<int> deleteAttachments);
     }
 }

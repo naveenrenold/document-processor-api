@@ -14,7 +14,7 @@ namespace DocumentProcessor.DataLayer
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public async Task<IEnumerable<Attachment>> GetAttachment(QueryFilter filter)
+        public async Task<IEnumerable<Attachment>> GetAttachment(QueryFilter filter, bool? downloadAttachment = true)
         {
             var query = Query.Attachment.getAttachment;
             var attachment = new DynamicParameters();

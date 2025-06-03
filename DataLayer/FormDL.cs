@@ -10,7 +10,7 @@ using Query = DocumentProcessor.Constants.Query;
 
 namespace DocumentProcessor.DataLayer
 {
-    public class FormDL(IDbConnection dbconnection, IFtpClient ftpClient, IOptions<AppSettings> appSettings) : BaseRepository, IFormDL
+    public class FormDL(IDbConnection dbconnection, IFtpClient ftpClient, IOptions<AppSettings> appSettings, IAttachmentDL attachmentDL) : BaseRepository, IFormDL
     {
         private readonly IDbConnection conn = dbconnection;
 
@@ -21,7 +21,7 @@ namespace DocumentProcessor.DataLayer
             query = BuildQuery(filter, query, ref form);
             return await conn.QueryAsync<FormResponse>(query, form);            
         }
-        public async Task<int> PostForm(Form request, IFormFileCollection? attachments)
+        public async Task<int> PostForm(Form request, IFormFileCollection? attachments, List<int> deleteAttachments)
         {
             using (var connection = new SqlConnection(conn.ConnectionString))
             {
@@ -44,9 +44,14 @@ namespace DocumentProcessor.DataLayer
                     }
 
                     ftpClient.AutoConnect();
-                    var attachmentIds = attachments?.Select(a => a.FileName).ToList() ?? [];                    
-                    var deleteresult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, FileNames = attachmentIds }, transaction);
-                    var fileNames = ftpClient.GetNameListing($"{appSettings.Value.FTPDestinationPath}/{formId}").Where(a => !attachmentIds.Contains(a));                    
+                    var fileNames = new List<string?> {};
+                    if (deleteAttachments != null && deleteAttachments.Count > 0)
+                    {
+                        var deleteAttachmentString = string.Join(",", deleteAttachments);
+                        var getAttachment = await attachmentDL.GetAttachment(new QueryFilter("AttachmentId", Field: "AttachmentId", Query: $"attachmentId in {deleteAttachmentString}"), false);
+                        fileNames = getAttachment.Select(x => x.FileName).ToList();                        
+                        var deleteresult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, AttachmentId = deleteAttachments }, transaction);
+                    }
 
                     if (attachments == null)
                     {
@@ -92,7 +97,7 @@ namespace DocumentProcessor.DataLayer
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        throw new Exception($"Failed to upload attachments", ex);
+                        throw new Exception($"Failed to update attachments", ex);
                     }
 
                     transaction.Commit();

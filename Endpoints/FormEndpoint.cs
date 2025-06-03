@@ -26,14 +26,18 @@ namespace DocumentProcessor.Endpoints
             var form = System.Text.Json.JsonSerializer.Deserialize<Form>(request, new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });            
+            });
+            var deleteAttachments = System.Text.Json.JsonSerializer.Deserialize<DeleteAttachmentsRequest>(request, new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
             var error = ValidatePostForm(form, attachments);
             if (error != "")
             {
                 return Results.BadRequest(new ValidationModel(error));
             }
 
-            var response = await formDL.PostForm(form, attachments);
+            var response = await formDL.PostForm(form, attachments, deleteAttachments?.DeleteAttachments ?? []);
             if (response == 0)
             {
                 return Results.BadRequest("Failed to add form data");
