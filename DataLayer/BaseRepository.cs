@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using DocumentProcessor.Model;
-using System.ComponentModel.DataAnnotations;
 
 namespace DocumentProcessor.DataLayer
 {
@@ -8,6 +7,10 @@ namespace DocumentProcessor.DataLayer
     {
         protected string BuildQuery(BaseFilter baseFilter, string rawQuery, ref DynamicParameters dynamicParameters)
         {
+            if(string.IsNullOrEmpty(baseFilter.Field))
+            {
+                baseFilter.Field = baseFilter.DefaultField;
+            }            
             dynamicParameters.Add("@Limit", baseFilter.Limit);
             dynamicParameters.Add("@Offset", baseFilter.Offset);
             var orderByClause = $" order by {baseFilter.OrderBy} {baseFilter.SortBy}";

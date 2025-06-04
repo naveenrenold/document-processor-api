@@ -5,7 +5,6 @@ using DocumentProcessor.Startup;
 using FluentFTP;
 using Microsoft.Extensions.Options;
 using System.Data;
-using System.Security.Cryptography;
 using Query = DocumentProcessor.Constants.Query;
 
 namespace DocumentProcessor.DataLayer
@@ -14,7 +13,7 @@ namespace DocumentProcessor.DataLayer
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public async Task<IEnumerable<Attachment>> GetAttachment(QueryFilter filter, bool? downloadAttachment = true)
+        public async Task<IEnumerable<Attachment>> GetAttachment(QueryFilter<AttachmentResponse> filter, bool? downloadAttachment = true)
         {
             var query = Query.Attachment.getAttachment;
             var attachment = new DynamicParameters();
@@ -42,7 +41,7 @@ namespace DocumentProcessor.DataLayer
             return attachments;
         }
 
-        public async Task<bool> PostAttachment(QueryFilter filter)
+        public async Task<bool> PostAttachment(QueryFilter<AttachmentResponse> filter)
         {
             //var query = Query.Attachment.postAttachment;
             //var attachment = new DynamicParameters();

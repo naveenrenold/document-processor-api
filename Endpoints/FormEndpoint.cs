@@ -15,8 +15,13 @@ namespace DocumentProcessor.Endpoints
             app.MapGet("/form", GetForm);
             app.MapPost("/form", PostForm).DisableAntiforgery();
         }
-        public static async Task<IResult> GetForm(IFormDL formDL, [AsParameters]QueryFilter filter)
+        public static async Task<IResult> GetForm(IFormDL formDL, [AsParameters]QueryFilter<FormResponse> filter)            
         {
+            var validationError = filter.Validate(typeof(FormResponse));
+            if(validationError != null && validationError.Any())
+            {
+                return Results.BadRequest(validationError);
+            }
             var response = await formDL.GetForm(filter);
             return Results.Ok(response);
         }

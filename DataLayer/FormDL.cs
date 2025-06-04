@@ -14,7 +14,7 @@ namespace DocumentProcessor.DataLayer
     {
         private readonly IDbConnection conn = dbconnection;
 
-        public async Task<IEnumerable<FormResponse>> GetForm(QueryFilter filter)
+        public async Task<IEnumerable<FormResponse>> GetForm(QueryFilter<FormResponse> filter)
         {
             var query = Query.Form.getForm;
             var form = new DynamicParameters();
@@ -45,7 +45,7 @@ namespace DocumentProcessor.DataLayer
                     }
 
                     ftpClient.AutoConnect();                    
-                    var getAttachment = await attachmentDL.GetAttachment(new QueryFilter("AttachmentId", Field: "AttachmentId,FileName", Query: $"Id eq {formId}"), false);
+                    var getAttachment = await attachmentDL.GetAttachment(new QueryFilter<AttachmentResponse>("AttachmentId", Field: "AttachmentId,FileName", Query: $"Id eq {formId}"), false);
 
                     var deleteFileNames = new List<string?> { };
                     var addFileNames = attachments?.Where(a => !getAttachment.Any(b => b.FileName == a.FileName)) ?? [];

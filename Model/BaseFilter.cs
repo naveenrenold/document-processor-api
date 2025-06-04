@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using DocumentProcessor.DataLayer;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DocumentProcessor.Model
 {
@@ -13,7 +9,7 @@ namespace DocumentProcessor.Model
         /// </summary>
         public BaseFilter(string orderBy)
         {
-            OrderBy ??= orderBy;
+            OrderBy ??= orderBy;            
         }
         /// <summary>
         /// Defaule value is 25 records max
@@ -58,6 +54,7 @@ namespace DocumentProcessor.Model
         ///</summary>
         //[JsonIgnore]
         public List<Filter>? Filters { get; set; }
+        public string? DefaultField { get; set; }
 
         ///<summary>
         ///Validate method to validate the properties
@@ -102,7 +99,7 @@ namespace DocumentProcessor.Model
                 errors.Add(new ValidationResult("Invalid query", invalidFilter));
                 return false;
             }
-            List<string> selector = t.GetProperties().Select(s => s.Name.ToLower()).ToList();
+            List<string> selector = t.GetProperties().Select(s => s.Name.ToLower()).ToList();            
             IEnumerable<string> invalidSelector = conditions.Where(w => !selector.Contains(w.Split(" ").FirstOrDefault().ToLower().Trim()));
             if (invalidSelector.Any())
             {
@@ -133,12 +130,6 @@ namespace DocumentProcessor.Model
             }
             return true;
         }
-
-        //public static bool TryParse(string request, out BaseFilter filter)
-        //{            
-        //    filter = System.Text.Json.JsonSerializer.Deserialize<BaseFilter>(request) ?? new BaseFilter("Id");
-        //    return filter != null;
-        //}
     }
     ///<summary>
     ///Filter class

@@ -17,7 +17,7 @@
             from Attachment A
          )
         select count(1) OVER() AS 
-        TotalRecords, AttachmentId , Id, FileName, FilePath, FileSize, FileType, UploadedBy, UploadedOn
+        TotalRecords, {2}
         from CTE {0} {1}
         OFFSET @offset ROWS 
         FETCH NEXT @limit ROWS ONLY;";

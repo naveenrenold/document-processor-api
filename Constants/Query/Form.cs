@@ -28,7 +28,7 @@ inner join FormStatus FS on F.StatusId = FS.StatusId
 inner join Process P on F.ProcessId = P.ProcessId
 inner join Location L on F.LocationId = L.LocationId )
 select count(1) OVER() AS 
-TotalRecords, Id, TypeId, TypeName, StatusId, StatusName, ProcessId, ProcessName, CustomerName, CustomerAddress,PhoneNumber, PhoneNumber2, LocationId, LocationName, CreatedBy, CreatedOn, LastUpdatedBy, LastUpdatedOn
+TotalRecords, {2}
 from CTE {0} {1}
 OFFSET @offset ROWS 
 FETCH NEXT @limit ROWS ONLY;";
