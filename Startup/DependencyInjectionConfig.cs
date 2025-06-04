@@ -1,4 +1,7 @@
 ﻿using DocumentProcessor.DataLayer;
+using DocumentProcessor.Validator.Model;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 
 namespace DocumentProcessor.Startup
 {
@@ -13,6 +16,8 @@ namespace DocumentProcessor.Startup
             .AddClasses(classes => classes.Where(type => type.Name.EndsWith("DL")))            
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+            builder.Services.AddValidatorsFromAssemblyContaining<AttachmentValidator>();
         }        
     }
 }

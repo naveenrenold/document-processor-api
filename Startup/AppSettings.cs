@@ -7,5 +7,6 @@
         public required string FTPUsername { get; set; }
         public required string FTPPassword { get; set; }
         public required string FTPDestinationPath { get; set; }
+        public int  MaxFileSize { get; set; }
     }
 }

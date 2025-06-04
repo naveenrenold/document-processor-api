@@ -1,5 +1,7 @@
 ﻿using DocumentProcessor.Model;
+using DocumentProcessor.Startup;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 
 namespace DocumentProcessor.Validator.Model
 {
@@ -14,14 +16,14 @@ namespace DocumentProcessor.Validator.Model
 
     public class AttachmentValidator : AbstractValidator<IFormFile>
     {
-        public AttachmentValidator()
+        public AttachmentValidator(IOptions<AppSettings> appSettings)
         {
             RuleFor(attachment => attachment.FileName)
                 .NotEmpty().WithMessage("File Name is required.")
                 .MaximumLength(100).WithMessage("File Name cannot exceed 100 characters.");
             RuleFor(attachment => attachment.Length/1024)
                 .NotEmpty().WithMessage("File is empty.")
-                .LessThan(2000).WithMessage("File size must be less than 2000 Kb");
+                .LessThan(appSettings.Value.MaxFileSize).WithMessage($"File size must be less than {appSettings.Value.MaxFileSize} Kb");
             RuleFor(RuleFor => RuleFor.ContentType)
                 .NotEmpty().WithMessage("Content Type is required.")
                 .Must(contentType =>

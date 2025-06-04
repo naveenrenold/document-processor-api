@@ -21,14 +21,14 @@ namespace DocumentProcessor.Endpoints
             return Results.Ok(response);
         }
 
-        public static async Task<IResult> PostForm(IFormDL formDL, [FromForm]string request, IFormFileCollection attachments)
+        public static async Task<IResult> PostForm(IFormDL formDL, [FromForm]string request, IFormFileCollection attachments, IValidator<IFormFile> attachmentValidator)
         {
             var jsonSerialiserOptions = new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
             var formRequest = System.Text.Json.JsonSerializer.Deserialize<FormRequest>(request, jsonSerialiserOptions);            
-            var error = ValidatePostForm(formRequest?.Form, attachments);
+            var error = ValidatePostForm(formRequest?.Form, attachments, attachmentValidator);
             if (error != "")
             {
                 return Results.BadRequest(new ValidationModel(error));
@@ -41,7 +41,7 @@ namespace DocumentProcessor.Endpoints
             }            
             return Results.Ok(formRequest.Form.Id == 0 ?  $"Form:{response} has been created" : $"Form:{response} has been updated");
         }
-        public static string ValidatePostForm(Form? form, IFormFileCollection? attachments)
+        public static string ValidatePostForm(Form? form, IFormFileCollection? attachments, IValidator<IFormFile> attachmentValidator)
         {
             if(form == null)
             {
@@ -56,15 +56,14 @@ namespace DocumentProcessor.Endpoints
             if(attachments == null || attachments.Count == 0)
             {
                 return string.Empty;
-            }
-            var attachmentsValidator = new AttachmentValidator();
+            }            
             foreach (var attachment in attachments)
             {   
                 if(attachment == null)
                 {
                     return "Attachment is null";
                 }
-                error = attachmentsValidator.Validate(attachment).ToString().Split("\n")[0];
+                error = attachmentValidator.Validate(attachment).ToString().Split("\n")[0];
                 if (error != "")
                 {
                     return error;
