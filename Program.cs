@@ -16,6 +16,7 @@ app.UseHttpsRedirection();
 app.AddFormEndpoints();
 app.AddProcessEndpoints();
 app.AddAttachmentEndpoints();
+app.AddActivityEndpoints();
 app.UseCors("CorsPolicy");
 
 app.Run();

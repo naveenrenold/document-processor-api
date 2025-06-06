@@ -34,8 +34,7 @@ OFFSET @offset ROWS
 FETCH NEXT @limit ROWS ONLY;";
 
         public static readonly string postForm = @"DECLARE @LocalDateTime DATETIME,
-@LocationId int,
-@Id int;
+@LocationId int;
 exec getLocalDate @LocalDateTime OUTPUT;
 
 Select @LocationId = LocationId from Location where LocationName = @Location;

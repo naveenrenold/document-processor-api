@@ -10,7 +10,7 @@ using Query = DocumentProcessor.Constants.Query;
 
 namespace DocumentProcessor.DataLayer
 {
-    public class FormDL(IDbConnection dbconnection, IFtpClient ftpClient, IOptions<AppSettings> appSettings, IAttachmentDL attachmentDL) : BaseRepository, IFormDL
+    public class FormDL(IDbConnection dbconnection, IFtpClient ftpClient, IOptions<AppSettings> appSettings, IAttachmentDL attachmentDL, IActivityDL activityDL) : BaseRepository, IFormDL
     {
         private readonly IDbConnection conn = dbconnection;
 
@@ -44,15 +44,31 @@ namespace DocumentProcessor.DataLayer
                         }
                     }
 
-                    ftpClient.AutoConnect();                    
+                    ftpClient.AutoConnect();
                     var getAttachment = await attachmentDL.GetAttachment(new QueryFilter<AttachmentResponse>("AttachmentId", Field: "AttachmentId,FileName", Query: $"Id eq {formId}"), false);
 
                     var deleteFileNames = new List<string?> { };
                     var addFileNames = attachments?.Where(a => !getAttachment.Any(b => b.FileName == a.FileName)) ?? [];
+
+                    string oldFileName = string.Join(", ", getAttachment.Select(a => a.FileName));
+                    string newFileName = oldFileName;
+
                     if (deleteAttachments != null && deleteAttachments.Count > 0)
-                    {                                               
-                        deleteFileNames = getAttachment.Where(a => deleteAttachments.Contains(a.AttachmentId) ).Select(x => x.FileName).ToList();                        
-                        var deleteResult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, FileNames = deleteFileNames }, transaction);
+                    {
+                        newFileName = string.Join(", ", getAttachment.Where(a => !deleteAttachments.Contains(a.AttachmentId)).Select(x => x.FileName));
+                        deleteFileNames = getAttachment.Where(a => deleteAttachments.Contains(a.AttachmentId) ).Select(x => x.FileName).ToList();                                                
+                        var deleteAttachmentActivity = await connection.ExecuteAsync(Query.Activity.postActivity, new Activity
+                        {
+                            Id = formId,                            
+                            ActivityTypeId = 5,
+                            Comments = $"Deleted {deleteFileNames.Count} attachments",
+                            Field = "FileName",
+                            OldValue = oldFileName,
+                            NewValue = newFileName,
+                            CreatedBy = request.LastUpdatedBy
+                        }, transaction);
+                        var deleteResult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, new { Id = formId, FileNames = deleteFileNames}, transaction);
+                        oldFileName = newFileName; 
                     }
 
                     if (attachments == null)
@@ -65,7 +81,22 @@ namespace DocumentProcessor.DataLayer
                         return formId;
                     }
                     try
-                    {                                                
+                    {
+                        newFileName = oldFileName + (oldFileName.Length > 0 ? ", " : "") + string.Join(", ", addFileNames.Select(x => x.FileName));
+                        if (addFileNames.Any())
+                        {
+                            var addAttachmentActivity = await connection.ExecuteAsync(Query.Activity.postActivity, new Activity
+                            {
+                                Id = formId,
+                                ActivityTypeId = 4,
+                                Comments = $"Added {addFileNames.Count()} attachments",
+                                Field = "FileName",
+                                OldValue = oldFileName,
+                                NewValue = newFileName,
+                                CreatedBy = request.LastUpdatedBy
+                            }, transaction);
+                        }
+                        //var deleteResult = await connection.ExecuteAsync(Query.Attachment.deleteAttachment, addAttachmentActivity, transaction);
                         foreach (var attachment in addFileNames)
                         {
                             var fileName = $"{attachment.FileName}";
@@ -82,7 +113,7 @@ namespace DocumentProcessor.DataLayer
                             };
 
                             var result = await connection.ExecuteAsync(Query.Attachment.addAttachment, attachmentData, transaction);
-                            if(!ftpClient.DirectoryExists($"{appSettings.Value.FTPDestinationPath}/{formId}"))
+                            if (!ftpClient.DirectoryExists($"{appSettings.Value.FTPDestinationPath}/{formId}"))
                             {
                                 ftpClient.CreateDirectory($"{appSettings.Value.FTPDestinationPath}/{formId}");
                             }

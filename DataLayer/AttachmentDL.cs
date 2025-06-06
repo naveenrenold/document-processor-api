@@ -41,13 +41,13 @@ namespace DocumentProcessor.DataLayer
             return attachments;
         }
 
-        public async Task<bool> PostAttachment(QueryFilter<AttachmentResponse> filter)
-        {
-            //var query = Query.Attachment.postAttachment;
-            //var attachment = new DynamicParameters();
-            //query = BuildQuery(filter, query, ref attachment);
-            //return await conn.QueryAsync<Attachment>(query, attachment);
-            return false;
-        }
+        //public async Task<bool> PostAttachment(QueryFilter<AttachmentResponse> filter)
+        //{
+        //    //var query = Query.Attachment.postAttachment;
+        //    //var attachment = new DynamicParameters();
+        //    //query = BuildQuery(filter, query, ref attachment);
+        //    //return await conn.QueryAsync<Attachment>(query, attachment);
+        //    return false;
+        //}
     }
 }
