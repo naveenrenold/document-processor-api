@@ -7,9 +7,14 @@ builder.AddDependencies();
 builder.AddSqlConnection(builder.Configuration.GetConnectionString("Database") ?? "");
 builder.AddCors(builder.Configuration.GetSection("AppSettings:AllowedUrls").Get<string[]>() ?? []);
 builder.AddFtpConnection(builder.Configuration.GetSection("AppSettings:FTPServer").Get<string>() ?? "", builder.Configuration.GetSection("AppSettings:FTPUsername").Get<string>() ?? "", builder.Configuration.GetSection("AppSettings:FTPPassword").Get<string>() ?? "");
+builder.AddAuthenticationDI();
+builder.AddAuthourizationDI();
 
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
@@ -17,7 +22,7 @@ app.AddFormEndpoints();
 app.AddProcessEndpoints();
 app.AddAttachmentEndpoints();
 app.AddActivityEndpoints();
-app.UseCors("CorsPolicy");
+
 
 app.Run();
 

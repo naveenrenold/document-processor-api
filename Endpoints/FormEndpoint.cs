@@ -12,7 +12,7 @@ namespace DocumentProcessor.Endpoints
     {
         public static void AddFormEndpoints(this WebApplication app)
         {
-            app.MapGet("/form", GetForm);
+            app.MapGet("/form", GetForm).DisableAntiforgery().RequireAuthorization();
             app.MapPost("/form", PostForm).DisableAntiforgery();
         }
         public static async Task<IResult> GetForm(IFormDL formDL, [AsParameters]QueryFilter<FormResponse> filter)            
@@ -43,8 +43,21 @@ namespace DocumentProcessor.Endpoints
             if (response == 0)
             {
                 return Results.BadRequest("Failed to add form data");
-            }            
-            return Results.Ok(formRequest.Form.Id == 0 ?  $"Form:{response} has been created" : $"Form:{response} has been updated");
+            }
+            string successMessage;
+            if(formRequest.Form.Id == 0)
+            {
+                successMessage = $"Form:{response} has been created";
+            }
+            else if(formRequest.Form.StatusId == 4)
+            {
+                successMessage = $"Form:{response} has been completed";
+            }
+            else
+            {
+                successMessage = $"Form:{response} has been updated";
+            }
+            return Results.Ok(successMessage);
         }
         public static string ValidatePostForm(Form? form, IFormFileCollection? attachments, IValidator<IFormFile> attachmentValidator)
         {
