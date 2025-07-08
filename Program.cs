@@ -12,9 +12,9 @@ builder.AddAuthourizationDI();
 
 var app = builder.Build();
 
-app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("CorsPolicy");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
