@@ -12,8 +12,8 @@ namespace DocumentProcessor.Endpoints
     {
         public static void AddFormEndpoints(this WebApplication app)
         {
-            app.MapGet("/form", GetForm).DisableAntiforgery().RequireAuthorization();
-            app.MapPost("/form", PostForm).DisableAntiforgery();
+            app.MapGet("/form", GetForm).DisableAntiforgery();
+            app.MapPost("/form", PostForm).DisableAntiforgery().RequireAuthorization();
         }
         public static async Task<IResult> GetForm(IFormDL formDL, [AsParameters]QueryFilter<FormResponse> filter)            
         {

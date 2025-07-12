@@ -9,7 +9,7 @@ namespace DocumentProcessor.Endpoints
 
             public static void AddActivityEndpoints(this WebApplication app)
             {
-                app.MapGet("/Activity", GetActivity);
+                app.MapGet("/Activity", GetActivity).RequireAuthorization();
                 //app.MapPost("/Activity", PostActivity).DisableAntiforgery();
             }
             public static async Task<IResult> GetActivity(IActivityDL activityDL, [AsParameters] QueryFilter<ActivityResponse> filter)

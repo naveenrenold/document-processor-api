@@ -12,6 +12,9 @@ namespace DocumentProcessor.Startup
                     options.AddPolicy("CorsPolicy", policy =>
                     {
                         policy.WithOrigins(allowedUrls).AllowAnyHeader().AllowAnyMethod();
+                        policy.AllowAnyHeader();
+                        policy.AllowAnyMethod();
+                        policy.AllowCredentials();
                     });
                 });
         }

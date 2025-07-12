@@ -13,5 +13,6 @@ namespace DocumentProcessor.Endpoints
         {            
             return Results.Ok(await processDL.GetProcess());
         }
+
     }
 }
